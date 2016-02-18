@@ -35,18 +35,21 @@ public class EnemyHealth : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (player.transform.position.x < transform.position.x)
+        if (player)
         {
-            GetComponent<SpriteRenderer>().flipX = true;
-            isFacingRight = true;
-        }
-        else
-        {
-            GetComponent<SpriteRenderer>().flipX = false;
-            isFacingRight = false;
+            if (player.transform.position.x < transform.position.x)
+            {
+                GetComponent<SpriteRenderer>().flipX = true;
+                isFacingRight = true;
+            }
+            else
+            {
+                GetComponent<SpriteRenderer>().flipX = false;
+                isFacingRight = false;
+            }
         }
 
-           shootTimer -= Time.deltaTime;
+        shootTimer -= Time.deltaTime;
 
         if (shootTimer <= 0)
         {
@@ -82,7 +85,7 @@ public class EnemyHealth : MonoBehaviour {
 
                 GetComponent<Rigidbody2D>().isKinematic = true;
                 Destroy(transform.GetChild(0).gameObject);
-                Destroy(GetComponent<BoxCollider2D>());
+                Destroy(GetComponent<PolygonCollider2D>());
 
                 firstDestroy = false;
             }

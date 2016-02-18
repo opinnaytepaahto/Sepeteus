@@ -8,12 +8,17 @@ public class BulletController : MonoBehaviour {
 
     public bool facingRight;
 
-    private float timer = 5f;
+    public bool doesDamage = true;
+
+    private float timer = 2f;
 
 	// Use this for initialization
 	void Start () {
         player = GameObject.Find("Spaceman");
-        PlayerController controller = player.GetComponent<PlayerController>();  
+        if (player)
+        {
+            PlayerController controller = player.GetComponent<PlayerController>();
+        }
 
         physics = GetComponent<Rigidbody2D>();
 
@@ -39,9 +44,19 @@ public class BulletController : MonoBehaviour {
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Enemy")
+        if (doesDamage)
         {
-            collision.gameObject.GetComponent<EnemyHealth>().decreaseHealth(5f);
+            if (collision.gameObject.tag == "Enemy")
+            {
+                collision.gameObject.GetComponent<EnemyHealth>().decreaseHealth(25f);
+            }
+
+            if (collision.gameObject.tag == "Player")
+            {
+                collision.gameObject.GetComponent<PlayerController>().decreaseHealth(10f);
+            }
+
+            doesDamage = false;
         }
     }
 }

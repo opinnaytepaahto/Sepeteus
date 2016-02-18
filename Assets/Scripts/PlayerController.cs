@@ -8,6 +8,9 @@ public class PlayerController : MonoBehaviour {
     public float maxOxygen = 500f;
     public float currentOxygen = 0f;
 
+    public float maxPlayerHealth = 100f;
+    public float currentPlayerHealth = 0f;
+
     public Transform groundDetector;
     public bool grounded = true;
 
@@ -20,6 +23,14 @@ public class PlayerController : MonoBehaviour {
 
     public float shootTimer = 0.3f;
 
+    private float timer = 3f;
+
+    public GameObject hearth1;
+    public GameObject hearth2;
+    public GameObject hearth3;
+    public GameObject hearth4;
+    public GameObject hearth5;
+
     public GameObject bullet;
     public GameObject oxygenBar;
 
@@ -28,6 +39,8 @@ public class PlayerController : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
+        currentPlayerHealth = maxPlayerHealth;
+
         physics = GetComponent<Rigidbody2D>();
 
         InvokeRepeating("decreaseOxygen", 0.5f, 0.5f);
@@ -91,6 +104,54 @@ public class PlayerController : MonoBehaviour {
 
             shootTimer = 0.3f;
         }
+
+        if (currentPlayerHealth <= 0f)
+        {
+            transform.GetChild(3).GetComponent<AudioSource>().Play();
+
+            Destroy(gameObject);
+            Destroy(this);
+        }
+
+        if (currentOxygen == 0)
+        {
+            currentPlayerHealth = 0;
+        }
+
+        if (currentPlayerHealth <= 80f)
+        {
+            hearth1.SetActive(false);
+        }
+
+        if (currentPlayerHealth <= 60f)
+        {
+            hearth2.SetActive(false);
+        }
+
+        if (currentPlayerHealth <= 40f)
+        {
+            hearth3.SetActive(false);
+        }
+        if (currentPlayerHealth <= 20f)
+        {
+            hearth4.SetActive(false);
+        }
+
+        if (currentPlayerHealth <= 0f)
+        {
+            hearth5.SetActive(false);
+        }
+
+        if (currentPlayerHealth <= 0f)
+        {
+            timer -= Time.deltaTime;
+
+            if (timer <= 0)
+            {
+                Destroy(gameObject);
+                Destroy(this);
+            }
+        }
     }
 
     void Flip()
@@ -108,6 +169,11 @@ public class PlayerController : MonoBehaviour {
 
         float tempHealth = currentOxygen / maxOxygen;
         setOxygenBar(tempHealth);
+    }
+
+    public void decreaseHealth(float health)
+    {
+        currentPlayerHealth -= health;
     }
 
     public void setOxygenBar(float oxygen)
