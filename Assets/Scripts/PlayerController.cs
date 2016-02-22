@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 
@@ -30,6 +31,8 @@ public class PlayerController : MonoBehaviour {
     public GameObject hearth3;
     public GameObject hearth4;
     public GameObject hearth5;
+
+    public GameObject scoreDisplay;
 
     public GameObject bullet;
     public GameObject oxygenBar;
@@ -118,29 +121,58 @@ public class PlayerController : MonoBehaviour {
             currentPlayerHealth = 0;
         }
 
-        if (currentPlayerHealth <= 80f)
+        if (currentPlayerHealth >= 81f && currentPlayerHealth <= 100f)
+        {
+            hearth1.SetActive(true);
+            hearth2.SetActive(true);
+            hearth3.SetActive(true);
+            hearth4.SetActive(true);
+            hearth5.SetActive(true);
+        }
+
+        if (currentPlayerHealth >= 61f && currentPlayerHealth <= 80f)
         {
             hearth1.SetActive(false);
+            hearth2.SetActive(true);
+            hearth3.SetActive(true);
+            hearth4.SetActive(true);
+            hearth5.SetActive(true);
         }
 
-        if (currentPlayerHealth <= 60f)
+        if (currentPlayerHealth >= 41f && currentPlayerHealth <= 60f)
         {
+            hearth1.SetActive(false);
             hearth2.SetActive(false);
+            hearth3.SetActive(true);
+            hearth4.SetActive(true);
+            hearth5.SetActive(true);
         }
-
-        if (currentPlayerHealth <= 40f)
+        if (currentPlayerHealth >= 21f && currentPlayerHealth <= 40f)
         {
+            hearth1.SetActive(false);
+            hearth2.SetActive(false);
             hearth3.SetActive(false);
-        }
-        if (currentPlayerHealth <= 20f)
-        {
-            hearth4.SetActive(false);
+            hearth4.SetActive(true);
+            hearth5.SetActive(true);
         }
 
-        if (currentPlayerHealth <= 0f)
+        if (currentPlayerHealth >= 1f && currentPlayerHealth <= 20f)
         {
-            hearth5.SetActive(false);
+            hearth1.SetActive(false);
+            hearth2.SetActive(false);
+            hearth3.SetActive(false);
+            hearth4.SetActive(false);
+            hearth5.SetActive(true);
         }
+
+        //if (currentPlayerHealth <= 0f)
+        //{
+        //    hearth1.SetActive(false);
+        //    hearth2.SetActive(false);
+        //    hearth3.SetActive(false);
+        //    hearth4.SetActive(false);
+        //    hearth5.SetActive(false);
+        //}
 
         if (currentPlayerHealth <= 0f)
         {
@@ -152,6 +184,8 @@ public class PlayerController : MonoBehaviour {
                 Destroy(this);
             }
         }
+
+        updateScore();
     }
 
     void Flip()
@@ -179,5 +213,10 @@ public class PlayerController : MonoBehaviour {
     public void setOxygenBar(float oxygen)
     {
         oxygenBar.transform.localScale = new Vector2(Mathf.Clamp(oxygen, 0f, 1f), oxygenBar.transform.localScale.y);
+    }
+
+    private void updateScore()
+    {
+        scoreDisplay.GetComponent<Text>().text = "Score: " + GameObject.Find("Spaceman").GetComponent<PlayerController>().score;
     }
 }

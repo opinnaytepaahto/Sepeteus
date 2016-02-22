@@ -16,11 +16,14 @@ public class EnemyHealth : MonoBehaviour {
     private bool isFacingRight;
 
     public GameObject healthBar;
-    public GameObject scoreText;
 
     public GameObject bullet;
 
     public GameObject player;
+
+    public GameObject coin;
+    public GameObject oxygen;
+    public GameObject health;
 
     private Rigidbody2D physics;
 
@@ -79,13 +82,14 @@ public class EnemyHealth : MonoBehaviour {
             if (firstDestroy)
             {
                 GameObject.Find("Spaceman").GetComponent<PlayerController>().score += 10;
-                scoreText.GetComponent<Text>().text = "Score: " + GameObject.Find("Spaceman").GetComponent<PlayerController>().score;
 
                 transform.GetChild(1).GetComponent<AudioSource>().Play();
 
                 GetComponent<Rigidbody2D>().isKinematic = true;
                 Destroy(transform.GetChild(0).gameObject);
                 Destroy(GetComponent<PolygonCollider2D>());
+
+                StartCoroutine(spawnPickups());
 
                 firstDestroy = false;
             }
@@ -99,7 +103,7 @@ public class EnemyHealth : MonoBehaviour {
             }
         }
 	}
-
+    
     public void decreaseHealth(float amount)
     {
         currentHealth -= amount;
@@ -111,5 +115,31 @@ public class EnemyHealth : MonoBehaviour {
     public void setHealthBar(float health)
     {
         healthBar.transform.localScale = new Vector2(Mathf.Clamp(health, 0f, 1f), healthBar.transform.localScale.y);
+    }
+
+    IEnumerator spawnPickups()
+    {
+        for (int i = 0; i < Random.Range(1, 5); i++)
+        {
+            Instantiate(coin, transform.position + new Vector3(0, 0.15f, 0), Quaternion.identity);
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        if (Random.Range(0, 10) > 8)
+        {
+            for (int i = 0; i < 1; i++)
+            {
+                Instantiate(oxygen, transform.position + new Vector3(0, 0.25f, 0), Quaternion.identity);
+                yield return new WaitForSeconds(0.2f);
+            }
+
+            for (int i = 0; i < 1; i++)
+            {
+                Instantiate(health, transform.position + new Vector3(0, 0.25f, 0), Quaternion.identity);
+                yield return new WaitForSeconds(0.2f);
+            }
+        }
+
+        
     }
 }
