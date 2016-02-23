@@ -2,7 +2,8 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class EnemyHealth : MonoBehaviour {
+public class EnemyHealth : MonoBehaviour
+{
 
     public float maxHealth = 50f;
     public float currentHealth = 0f;
@@ -14,6 +15,7 @@ public class EnemyHealth : MonoBehaviour {
     private float shootTimer = 1.5f;
 
     private bool isFacingRight;
+    private bool aimIsRight = false;
 
     public GameObject healthBar;
 
@@ -24,6 +26,8 @@ public class EnemyHealth : MonoBehaviour {
     public GameObject coin;
     public GameObject oxygen;
     public GameObject health;
+
+    private float timer_ = 1f;
 
     private Rigidbody2D physics;
 
@@ -37,7 +41,10 @@ public class EnemyHealth : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+    {
+        updateAim();
+
         if (player)
         {
             if (player.transform.position.x < transform.position.x)
@@ -59,7 +66,7 @@ public class EnemyHealth : MonoBehaviour {
             shootTimer = 0;
         }
 
-        if (shootTimer == 0 && currentHealth > 0)
+        if (shootTimer == 0 && currentHealth > 0 && aimIsRight)
         {
             bullet.GetComponent<BulletController>().facingRight = isFacingRight;
 
@@ -92,6 +99,8 @@ public class EnemyHealth : MonoBehaviour {
                 StartCoroutine(spawnPickups());
 
                 firstDestroy = false;
+
+                gameObject.GetComponent<SpriteRenderer>().enabled = false;
             }
 
             timer -= Time.deltaTime;
@@ -102,7 +111,7 @@ public class EnemyHealth : MonoBehaviour {
                 Destroy(this);
             }
         }
-	}
+    }
     
     public void decreaseHealth(float amount)
     {
@@ -139,7 +148,44 @@ public class EnemyHealth : MonoBehaviour {
                 yield return new WaitForSeconds(0.2f);
             }
         }
-
-        
     }
+
+    private void updateAim()
+    {
+        RaycastHit2D hit = new RaycastHit2D();
+
+        if (!isFacingRight)
+        {
+            hit = Physics2D.Raycast(transform.position + new Vector3(2, 0, 0), transform.right);
+        }
+        else
+        {
+            hit = Physics2D.Raycast(transform.position + new Vector3(-2, 0, 0), -transform.right);
+        }
+
+        if (hit && hit.collider.gameObject.tag == "Player")
+        {
+            timer_ -= Time.deltaTime;
+
+            if (timer_ <= 0)
+            {
+                aimIsRight = true;
+                timer_ = 1.0f;
+            }
+        }
+        else
+        {
+            timer_ -= Time.deltaTime;
+
+            if (timer_ <= 0)
+            {
+                aimIsRight = false;
+                timer_ = 1.0f;
+            }
+        }
+
+        Debug.DrawRay(transform.position + new Vector3(2, 0, 0), -transform.right, Color.red);
+    }
+
+
 }
